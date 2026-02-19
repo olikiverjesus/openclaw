@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw — Clarity | Project Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ifc-dark': '#0f172a',
+                        'ifc-panel': '#1e293b',
+                        'ifc-accent': '#38bdf8',
+                        'bmad-green': '#10b981',
+                        'bmad-blue': '#6366f1',
+                        'bmad-purple': '#a855f7',
+                        'bmad-pink': '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-ifc-dark text-slate-200 font-sans antialiased min-h-screen flex flex-col selection:bg-ifc-accent selection:text-white">
+
+    <!-- Top Navigation / Project Header -->
+    <header class="border-b border-slate-700 bg-slate-900/80 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                
+                <!-- Project Identity -->
+                <div class="flex items-center gap-4">
+                    <!-- Updated with Clarity Bot Avatar -->
+                    <div class="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-900/50 overflow-hidden border border-white/10 group relative cursor-pointer">
+                         <img src="http://googleusercontent.com/image_generation_content/8" alt="Clarity Bot Avatar" class="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-300">
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                            OpenClaw <span class="text-slate-500 font-light">|</span> Clarity
+                            <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-mono uppercase tracking-wider">Active</span>
+                        </h1>
+                        <p class="text-xs text-slate-400 font-mono mt-1">
+                            <span class="text-cyan-400">v1.6</span> • Feb 18, 2026 • Owners: Will & Angie • Builder: Olikiver
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Global Project Context (The Constitution) -->
+                <div class="flex-1 w-full md:w-auto md:max-w-2xl">
+                    <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-3 flex flex-wrap gap-x-6 gap-y-2 text-xs font-mono">
+                        <div class="flex items-center gap-2" title="AI Model">
+                            <i class="fa-solid fa-brain text-bmad-purple"></i>
+                            <span class="text-slate-400">Model:</span>
+                            <span class="text-white font-bold">Opus 4.6</span>
+                        </div>
+                        <div class="flex items-center gap-2" title="Primary Interface">
+                            <i class="fa-solid fa-mobile-screen text-bmad-blue"></i>
+                            <span class="text-slate-400">Platform:</span>
+                            <span class="text-white font-bold">IFC App</span>
+                        </div>
+                        <div class="flex items-center gap-2" title="Host Machine">
+                            <i class="fa-solid fa-server text-bmad-green"></i>
+                            <span class="text-slate-400">Host:</span>
+                            <span class="text-white">Mac Mini</span>
+                        </div>
+                        <div class="flex items-center gap-2" title="Tech Stack">
+                            <i class="fa-brands fa-python text-yellow-500"></i>
+                            <span class="text-slate-400">Stack:</span>
+                            <span class="text-white">Python • Redis • SQLite</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BMad Controls -->
+                <div class="flex items-center gap-3">
+                    <button class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg text-sm transition-colors border border-slate-700">
+                        <i class="fa-solid fa-circle-question mr-1 text-bmad-pink"></i> /bmad-help
+                    </button>
+                    <button class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-cyan-900/50 transition-all">
+                        <i class="fa-solid fa-play mr-1"></i> Start Workflow
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="flex-1 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Workflow Phases -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+            <!-- Phase 1: Analysis (Complete) -->
+            <div class="group relative rounded-xl bg-slate-800 border border-slate-700 shadow-xl overflow-hidden hover:border-indigo-500/50 transition-colors">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-300"></div>
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span class="bg-indigo-500/20 text-indigo-300 w-6 h-6 rounded-md flex items-center justify-center text-xs">1</span>
+                            Analysis
+                        </h2>
+                        <span class="text-emerald-400 text-xs font-bold bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/20">COMPLETED</span>
+                    </div>
+
+                    <!-- Vision Image -->
+                    <div class="mb-4 rounded-lg overflow-hidden border border-indigo-500/30 shadow-lg shadow-indigo-900/20 group-hover:shadow-indigo-500/10 transition-all">
+                         <img src="http://googleusercontent.com/image_generation_content/3" alt="Clarity Vision" class="w-full h-32 object-cover object-top opacity-90 hover:opacity-100 transition-opacity">
+                         <div class="bg-indigo-900/40 px-2 py-1 text-[10px] text-indigo-200 border-t border-indigo-500/20 backdrop-blur-sm">
+                            Vision: "Talk to Clarity, it handles the rest."
+                         </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- Brief Item -->
+                        <div class="bg-slate-700/30 p-3 rounded-lg border-l-2 border-emerald-500">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-sm font-medium text-white">Product Brief</h3>
+                                <i class="fa-solid fa-check-circle text-emerald-500 text-xs"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">Vision: "Talk to Clarity, it handles the rest."</p>
+                            <div class="mt-2 text-[10px] font-mono text-indigo-300 bg-slate-800/50 p-1 rounded inline-block">
+                                <i class="fa-regular fa-file-code mr-1"></i> product-brief.md
+                            </div>
+                        </div>
+                        <!-- Research Item -->
+                        <div class="bg-slate-700/30 p-3 rounded-lg border-l-2 border-emerald-500">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-sm font-medium text-white">Workflow Research</h3>
+                                <i class="fa-solid fa-check-circle text-emerald-500 text-xs"></i>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">Identified 7+ office team roles & routing logic.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2: Planning (Completed) -->
+            <div class="group relative rounded-xl bg-slate-800 border border-slate-700 shadow-xl overflow-hidden hover:border-blue-500/50 transition-colors">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-cyan-400"></div>
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span class="bg-blue-500/20 text-blue-300 w-6 h-6 rounded-md flex items-center justify-center text-xs">2</span>
+                            Planning
+                        </h2>
+                        <span class="text-emerald-400 text-xs font-bold bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/20">COMPLETED</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- PRD Item -->
+                        <div class="bg-slate-700/30 p-3 rounded-lg border-l-2 border-emerald-500">
+                            <h3 class="text-sm font-medium text-white">Routing Logic & SLAs</h3>
+                            <p class="text-xs text-slate-400 mt-1">Defined rules for Michelle, Julio, Vanessa, etc.</p>
+                            <div class="mt-2 text-[10px] font-mono text-blue-300 bg-slate-800/50 p-1 rounded inline-block">
+                                <i class="fa-regular fa-file-lines mr-1"></i> PRD.md
+                            </div>
+                        </div>
+
+                        <!-- UX Item -->
+                        <div class="bg-slate-700/30 p-3 rounded-lg border-l-2 border-emerald-500">
+                            <h3 class="text-sm font-medium text-white">UX Design</h3>
+                            <p class="text-xs text-slate-400 mt-1">Voice-first (Meta Glasses) & Slack interactions defined.</p>
+                            <div class="mt-2 text-[10px] font-mono text-slate-500 bg-slate-800/50 p-1 rounded inline-block">
+                                <i class="fa-regular fa-image mr-1"></i> ux-spec.md
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3: Solutioning (Completed) -->
+            <div class="group relative rounded-xl bg-slate-800 border border-slate-700 shadow-xl overflow-hidden hover:border-purple-500/50 transition-colors">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-pink-400"></div>
+                <div class="p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span class="bg-purple-500/20 text-purple-300 w-6 h-6 rounded-md flex items-center justify-center text-xs">3</span>
+                            Solutioning
+                        </h2>
+                        <span class="text-emerald-400 text-xs font-bold bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/20">COMPLETED</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- Architecture Item -->
+                        <div class="bg-slate-700/30 p-3 rounded-lg border-l-2 border-emerald-500">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-sm font-medium text-white">Architecture & Stack</h3>
+                                <i class="fa-solid fa-check text-emerald-500 text-xs"></i>
+                            </div>
+                            <ul class="mt-2 space-y-1">
+                                <li class="text-xs text-emerald-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-server"></i> Mac Mini LaunchDaemon (Running)
+                                </li>
+                                <li class="text-xs text-emerald-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-brain"></i> Opus 4.6 (Connected)
+                                </li>
+                                <li class="text-xs text-emerald-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-database"></i> Redis & SQLite (Active)
+                                </li>
+                                <li class="text-xs text-emerald-400 flex items-center gap-2">
+                                    <i class="fa-solid fa-plug"></i> IFC API (Connected)
+                                </li>
+                            </ul>
+                            <div class="mt-2 text-[10px] font-mono text-purple-300 bg-slate-800/50 p-1 rounded inline-block">
+                                <i class="fa-solid fa-sitemap mr-1"></i> architecture.md
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 4: Build (Implementation - ACTIVE) -->
+            <div class="group relative rounded-xl bg-slate-800 border border-emerald-600 shadow-xl shadow-emerald-900/20 overflow-hidden ring-1 ring-emerald-500/30">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+                <div class="p-5 flex flex-col h-full">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span class="bg-emerald-500/20 text-emerald-300 w-6 h-6 rounded-md flex items-center justify-center text-xs">4</span>
+                            Build
+                        </h2>
+                        <span class="text-emerald-400 text-xs font-bold bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/20 animate-pulse">ACTIVE</span>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto pr-1 space-y-3 max-h-[300px] scrollbar-thin">
+                        
+                        <!-- Live Modules Section -->
+                        <div class="bg-slate-700/50 p-2 rounded border border-emerald-500/50">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-white">Live Modules (7/7)</span>
+                                <span class="text-[10px] text-emerald-400 bg-emerald-900/30 px-1 rounded animate-pulse">ONLINE</span>
+                            </div>
+                            <div class="mt-2 space-y-1.5 pl-2 border-l border-emerald-500">
+                                <div class="text-[11px] text-emerald-300 flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i class="fa-brands fa-python"></i> projects.py</span>
+                                    <span class="text-[9px] text-slate-400">Search, Portfolio</span>
+                                </div>
+                                <div class="text-[11px] text-emerald-300 flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i class="fa-brands fa-python"></i> tasks.py</span>
+                                    <span class="text-[9px] text-slate-400">Create, Pending</span>
+                                </div>
+                                <div class="text-[11px] text-emerald-300 flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i class="fa-brands fa-python"></i> adjuster.py</span>
+                                    <span class="text-[9px] text-slate-400">Meetings</span>
+                                </div>
+                                <div class="text-[11px] text-emerald-300 flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i class="fa-brands fa-python"></i> calendar.py</span>
+                                    <span class="text-[9px] text-slate-400">Events</span>
+                                </div>
+                                <div class="text-[11px] text-emerald-300 flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i class="fa-brands fa-python"></i> users.py</span>
+                                    <span class="text-[9px] text-slate-400">Directory</span>
+                                </div>
+                                <div class="text-[11px] text-emerald-300 flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i class="fa-brands fa-python"></i> messaging.py</span>
+                                    <span class="text-[9px] text-slate-400">DM Office</span>
+                                </div>
+                                <div class="text-[11px] text-emerald-300 flex items-center justify-between">
+                                    <span class="flex items-center gap-2"><i class="fa-brands fa-python"></i> trades.py</span>
+                                    <span class="text-[9px] text-slate-400">GraphQL + Emojis</span>
+                                </div>
+                            </div>
+                        </div>
+
+                         <!-- Memory System Section -->
+                         <div class="bg-indigo-900/20 p-2 rounded border border-indigo-500/30">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-indigo-200">Memory System (3-Layer)</span>
+                                <span class="text-[10px] text-indigo-300 bg-indigo-900/50 px-1 rounded">LEARNING</span>
+                            </div>
+                            <div class="mt-2 space-y-1.5 pl-2 border-l border-indigo-500/50">
+                                <div class="text-[11px] text-indigo-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-database text-[10px]"></i> SQLite DB (Local)
+                                </div>
+                                <div class="text-[11px] text-indigo-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-ear-listen text-[10px]"></i> Passive Learning
+                                </div>
+                                <div class="text-[11px] text-indigo-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-reply text-[10px]"></i> Context Injection
+                                </div>
+                                <div class="text-[9px] text-slate-400 italic pl-5">
+                                    Reading back facts automatically.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Epic 1: Foundation (DONE) -->
+                        <div class="bg-slate-700/20 p-2 rounded border border-slate-600/50 opacity-75">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-white">Epics Status</span>
+                            </div>
+                            <div class="mt-1 space-y-1 pl-2 border-l border-slate-600">
+                                <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                                    <span>Foundation</span> <span class="text-emerald-500">DONE</span>
+                                </div>
+                                <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                                    <span>Core Skills (7/7)</span> <span class="text-emerald-500">DONE</span>
+                                </div>
+                                <div class="text-[11px] text-slate-300 flex items-center justify-between">
+                                    <span>Memory Sync</span> <span class="text-yellow-500">IN PROGRESS</span>
+                                </div>
+                                <div class="text-[11px] text-slate-300 flex items-center justify-between">
+                                    <span>Advanced Flows</span> <span class="text-cyan-500">NEXT</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Quick Actions & Footer -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Project Context File Preview -->
+            <div class="lg:col-span-2 bg-slate-800 rounded-xl border border-slate-700 p-5">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-regular fa-file-code text-pink-400"></i> project-context.md
+                    </h3>
+                    <span class="text-xs text-slate-500">Active Ruleset</span>
+                </div>
+                <div class="bg-slate-900 rounded-lg p-3 font-mono text-xs text-slate-400 leading-relaxed border border-slate-800">
+                    <span class="text-purple-400">const</span> <span class="text-blue-400">PROJECT_NAME</span> = <span class="text-green-400">"OpenClaw Clarity"</span>;<br>
+                    <span class="text-purple-400">const</span> <span class="text-blue-400">AI_MODEL</span> = <span class="text-green-400">"Opus 4.6"</span>;<br>
+                    <span class="text-purple-400">const</span> <span class="text-blue-400">PLATFORM</span> = <span class="text-green-400">"IFC Custom App"</span>;<br>
+                    <span class="text-purple-400">const</span> <span class="text-blue-400">CONSTRAINTS</span> = [<br>
+                    &nbsp;&nbsp;<span class="text-green-400">"Use Opus for brain/routing"</span>,<br>
+                    &nbsp;&nbsp;<span class="text-green-400">"Use Sonnet for bulk analysis"</span>,<br>
+                    &nbsp;&nbsp;<span class="text-green-400">"Data must stay in IFC infrastructure"</span><br>
+                    ];
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-gradient-to-br from-cyan-900/40 to-slate-800 rounded-xl border border-cyan-500/20 p-5 flex flex-col justify-center gap-3">
+                <h3 class="text-sm font-bold text-white mb-1">Quick Actions</h3>
+                <button class="w-full text-left bg-slate-700/50 hover:bg-cyan-600/20 hover:text-cyan-300 text-slate-300 p-3 rounded-lg text-xs transition-all flex items-center gap-3 border border-transparent hover:border-cyan-500/30">
+                    <div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center text-cyan-500">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold">Quick Spec</div>
+                        <div class="text-[10px] opacity-70">Small hotfix or feature</div>
+                    </div>
+                </button>
+                <button class="w-full text-left bg-slate-700/50 hover:bg-emerald-600/20 hover:text-emerald-300 text-slate-300 p-3 rounded-lg text-xs transition-all flex items-center gap-3 border border-transparent hover:border-emerald-500/30">
+                    <div class="w-8 h-8 rounded bg-slate-800 flex items-center justify-center text-emerald-500">
+                        <i class="fa-solid fa-bug"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold">QA Automate</div>
+                        <div class="text-[10px] opacity-70">Generate test suite</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>
