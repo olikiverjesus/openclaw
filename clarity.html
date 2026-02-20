@@ -3,479 +3,719 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenClaw — Clarity | Project Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>OpenClaw — Clarity 3+ Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        app: {
-                            base: '#030712', // gray-950
-                            panel: '#111827', // gray-900
-                            border: '#1f2937', // gray-800
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #030712; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
-        
-        .glass-card {
-            background: rgba(17, 24, 39, 0.6);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        :root {
+            --bg: #06080F;
+            --panel: rgba(13,17,28,0.85);
+            --border: rgba(255,255,255,0.06);
+            --cyan: #00E5FF;
+            --purple: #A855F7;
+            --green: #22C55E;
+            --amber: #F59E0B;
+            --red: #EF4444;
+            --blue: #3B82F6;
+            --pink: #EC4899;
         }
-        
-        .glass-inner {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.03);
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background: var(--bg);
+            color: #C8CCD8;
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .mono { font-family: 'DM Mono', monospace; }
+
+        /* Ambient */
+        .glow-tl { position:fixed; top:-20%; left:-15%; width:50vw; height:50vw; background:radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%); pointer-events:none; z-index:0; }
+        .glow-br { position:fixed; bottom:-20%; right:-15%; width:50vw; height:50vw; background:radial-gradient(circle, rgba(168,85,247,0.04) 0%, transparent 70%); pointer-events:none; z-index:0; }
+
+        .container { max-width:1400px; margin:0 auto; padding:0 20px; position:relative; z-index:1; }
+
+        /* Header */
+        .header {
+            padding: 28px 0 24px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+        .header-top { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; }
+        .header h1 { font-size:26px; font-weight:700; color:#fff; letter-spacing:-0.5px; }
+        .header h1 span { color:var(--cyan); }
+        .header-sub { font-size:12px; color:#666; margin-top:6px; }
+        .header-sub .mono { color:var(--cyan); background:rgba(0,229,255,0.08); padding:2px 8px; border-radius:6px; border:1px solid rgba(0,229,255,0.15); }
+        .badge-live {
+            display:inline-flex; align-items:center; gap:6px;
+            font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+            color:var(--green); background:rgba(34,197,94,0.08);
+            border:1px solid rgba(34,197,94,0.2); padding:4px 12px; border-radius:20px;
+        }
+        .badge-live::before {
+            content:''; width:6px; height:6px; border-radius:50%; background:var(--green);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        /* Architecture Banner */
+        .arch-banner {
+            background: linear-gradient(135deg, rgba(0,229,255,0.04), rgba(168,85,247,0.04));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media(min-width:768px) { .arch-banner { grid-template-columns: 1fr 1fr 1fr; } }
+        .arch-box { text-align:center; padding:16px; }
+        .arch-box .icon { font-size:32px; margin-bottom:8px; }
+        .arch-box h3 { font-size:15px; font-weight:700; color:#fff; margin-bottom:4px; }
+        .arch-box p { font-size:12px; color:#777; line-height:1.5; }
+
+        /* Section */
+        .section { margin-bottom:40px; }
+        .section-head {
+            display:flex; align-items:center; gap:12px;
+            margin-bottom:16px; padding-bottom:12px;
+            border-bottom:1px solid var(--border);
+        }
+        .section-head h2 { font-size:14px; font-weight:700; color:#fff; text-transform:uppercase; letter-spacing:1.5px; }
+        .section-head .count {
+            font-size:11px; color:#666; background:rgba(255,255,255,0.04);
+            padding:2px 10px; border-radius:10px; border:1px solid var(--border);
         }
 
-        /* Smooth reveal for scrolling areas */
-        .mask-fade-bottom {
-            mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+        /* Skill Cards Grid */
+        .skills-grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap:12px;
+        }
+        .skill-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            transition: all 0.2s;
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+        .skill-card:hover {
+            border-color: rgba(255,255,255,0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .skill-card .accent {
+            position:absolute; top:0; left:0; right:0; height:2px;
+        }
+        .skill-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+        .skill-trigger {
+            font-size:14px; font-weight:600; color:#fff;
+            display:flex; align-items:center; gap:8px;
+        }
+        .skill-trigger .emoji { font-size:18px; }
+        .skill-status {
+            font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+            padding:3px 10px; border-radius:8px;
+        }
+        .status-live { color:var(--green); background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.2); }
+        .status-build { color:var(--amber); background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.2); }
+        .status-blocked { color:var(--red); background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); }
+        .status-wiring { color:var(--purple); background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.2); }
+
+        .skill-row { display:flex; gap:16px; margin-top:10px; }
+        .skill-col { flex:1; }
+        .skill-label { font-size:9px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:#555; margin-bottom:4px; }
+        .skill-val { font-size:12px; color:#AAA; line-height:1.5; }
+        .skill-val strong { color:#DDD; font-weight:500; }
+
+        .skill-blocker {
+            margin-top:10px; font-size:11px; color:var(--red);
+            background:rgba(239,68,68,0.06); padding:6px 10px; border-radius:8px;
+            border:1px solid rgba(239,68,68,0.1);
+        }
+
+        /* Conversations Section */
+        .convos-grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap:12px;
+        }
+        .convo-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .convo-card:hover { border-color: rgba(255,255,255,0.12); transform:translateY(-2px); }
+        .convo-icon { font-size:28px; margin-bottom:8px; }
+        .convo-name { font-size:14px; font-weight:600; color:#fff; margin-bottom:4px; }
+        .convo-desc { font-size:11px; color:#666; line-height:1.4; }
+        .convo-scope {
+            display:inline-block; margin-top:8px;
+            font-size:9px; font-weight:600; letter-spacing:1px; text-transform:uppercase;
+            padding:3px 10px; border-radius:8px;
+            color:#888; background:rgba(255,255,255,0.04); border:1px solid var(--border);
+        }
+
+        /* Sprint / Blockers */
+        .sprint-grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap:12px;
+        }
+        .sprint-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 18px;
+        }
+        .sprint-card h3 { font-size:13px; font-weight:700; color:#fff; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+        .sprint-item {
+            display:flex; align-items:flex-start; gap:10px;
+            padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03);
+            font-size:12px; color:#999;
+        }
+        .sprint-item:last-child { border-bottom:none; }
+        .sprint-item .dot {
+            width:8px; height:8px; border-radius:50%; margin-top:4px; flex-shrink:0;
+        }
+
+        /* Footer Stats */
+        .stats-bar {
+            display:flex; flex-wrap:wrap; gap:24px; justify-content:center;
+            padding:24px 0; margin-top:20px;
+            border-top:1px solid var(--border);
+        }
+        .stat { text-align:center; }
+        .stat-num { font-size:28px; font-weight:700; color:#fff; }
+        .stat-label { font-size:10px; color:#555; text-transform:uppercase; letter-spacing:1.5px; margin-top:2px; }
+
+        @media(max-width:640px) {
+            .skills-grid, .convos-grid, .sprint-grid { grid-template-columns:1fr; }
+            .header h1 { font-size:22px; }
         }
     </style>
 </head>
-<body class="text-gray-300 font-sans antialiased min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-100 relative overflow-x-hidden">
+<body>
+    <div class="glow-tl"></div>
+    <div class="glow-br"></div>
 
-    <!-- Ambient Background Glows -->
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div class="absolute top-[-20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-indigo-900/20 blur-[120px]"></div>
-        <div class="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-cyan-900/10 blur-[120px]"></div>
+    <div class="container">
+        <!-- NAV -->
+        <nav style="display:flex; gap:8px; padding:16px 0 0; flex-wrap:wrap;">
+            <a href="index.html" style="padding:8px 18px; border-radius:10px; font-size:12px; font-weight:600; text-decoration:none; background:rgba(0,229,255,0.12); color:var(--cyan); border:1px solid rgba(0,229,255,0.25);">Dashboard</a>
+            <a href="https://olikiverjesus.github.io/openclaw/journey" style="padding:8px 18px; border-radius:10px; font-size:12px; font-weight:600; text-decoration:none; background:rgba(255,255,255,0.04); color:#888; border:1px solid var(--border); transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(168,85,247,0.3)';this.style.color='#bbb'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)';this.style.color='#888'">📖 Rep Journey</a>
+        </nav>
+
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-top">
+                <div>
+                    <h1>Open<span>Claw</span> — Clarity 3+</h1>
+                    <div class="header-sub">
+                        One agent. Many skills. Organized conversations.
+                        &nbsp;&nbsp;<span class="mono">v1.18</span>&nbsp;&nbsp;
+                        Feb 20, 2026 &bull; Owners: Will & Angie &bull; Builder: Olikiver
+                    </div>
+                </div>
+                <div class="badge-live">Active</div>
+            </div>
+        </div>
+
+        <!-- ARCHITECTURE BANNER -->
+        <div class="arch-banner">
+            <div class="arch-box">
+                <div class="icon">🧠</div>
+                <h3>One Agent: Clarity</h3>
+                <p>Single AI brain across all projects & global chat. Same intelligence, different context per conversation.</p>
+            </div>
+            <div class="arch-box" style="border-left:1px solid var(--border); border-right:1px solid var(--border);">
+                <div class="icon">⚡</div>
+                <h3>Skills = Capabilities</h3>
+                <p>Every @command is a skill Clarity can call. Triggers → outcomes. No separate agents, just loaded skills.</p>
+            </div>
+            <div class="arch-box">
+                <div class="icon">💬</div>
+                <h3>Conversations = Context</h3>
+                <p>Project-level: fixed chats (Install, Upgrade). Global: reps create their own chats with custom context.</p>
+            </div>
+        </div>
+
+        <!-- SKILLS: SUPPLEMENT / OFFICE -->
+        <div class="section">
+            <div class="section-head">
+                <h2>Supplement & Office Skills</h2>
+                <span class="count">7 live</span>
+            </div>
+            <div class="skills-grid">
+                <!-- @start -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--cyan),var(--blue));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">🔍</span> @start</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@start</strong> in project chat</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Audits 5 required docs. Pass → BUILD. Fail → kicks to REP HANDS with specific missing items.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @response -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--green),var(--cyan));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">📬</span> @response</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@response</strong> after carrier replies</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Compares INS estimates, calculates momentum, creates Cathy + Kim tasks, rewrites F9s.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @review -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--purple),var(--pink));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">✅</span> @review</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@review</strong> before sending</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Final QA gate. Verifies bids, measurements, photos, F9s. Vanessa (P1) or Cathy (P2).</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @calling -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--amber),var(--red));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">📞</span> @calling</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@calling</strong> before dialing carrier</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">SLIM mode phone script. Every disputed item with F9 evidence, ready to read on the call.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @precall -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--blue),var(--purple));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">🗣️</span> @precall</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@precall</strong> before first carrier call</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Pre-supplement consultation script. Identifies potential blockers by trade before sending paperwork.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @appraisal -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--pink),var(--purple));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">⚖️</span> @appraisal</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@appraisal</strong> for appraisal prep</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">EagleView alignment, sub-bid math check, photo presence verification. Two tables + bullets for appraiser.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @reinspection -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--cyan),var(--green));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">🔄</span> @reinspection</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@reinspection</strong> before reinspect</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Pre-reinspection alignment check. Compares IFC estimate vs EagleView vs photos. Flags gaps.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKILLS: PORTFOLIO & OPS -->
+        <div class="section">
+            <div class="section-head">
+                <h2>Portfolio & Operations Skills</h2>
+                <span class="count">4 live &bull; 1 building</span>
+            </div>
+            <div class="skills-grid">
+                <!-- @meetup -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--purple),var(--blue));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">📊</span> @meetup</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@meetup</strong> in global chat</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Weekly portfolio review. Every project one-by-one. Auto-creates real tasks from action items.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @sla -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--red),var(--amber));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">🚨</span> @sla</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@sla</strong> or auto-runs 9am/2pm</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Full project + task SLA scan. Breaches with days overdue, warnings approaching deadline.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- @bill -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--green),var(--cyan));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">💳</span> @bill</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@bill</strong> after install</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Checks flow card for 🛑 blockers. If clear, creates Vanessa billing task. Flags issues.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proactive Monitor -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--cyan),var(--purple));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">👂</span> Proactive Monitor</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val"><strong>Nothing</strong> — always on, reads all channels</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Flags SLA breaches, answers project questions when no one else has. 4hr dedup window.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Morning Push -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--amber),var(--green));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">☀️</span> Morning Push</div>
+                        <div class="skill-status status-build">Building</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val"><strong>Nothing</strong> — auto 8am daily DM</div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Personalized daily briefing: calendar, SLA breaches, tasks due, top priority action.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKILLS: EMAIL AUTOMATION -->
+        <div class="section">
+            <div class="section-head">
+                <h2>Email Automation Skills</h2>
+                <span class="count">3 systems &bull; all live</span>
+            </div>
+            <div class="skills-grid">
+                <!-- @email -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--blue),var(--cyan));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">📧</span> @email</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types <strong>@email [client]</strong></div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Client installation email. Pulls calendar + project data. Fast execution, no file reading.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crew emails -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--amber),var(--red));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">🏗️</span> @G5 @H&R @Walter @Rigo</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types crew trigger e.g. <strong>@G5 [client]</strong></div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Crew installation email with CompanyCam collaborator invite. Pulls EagleView + project data.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supplier emails -->
+                <div class="skill-card">
+                    <div class="accent" style="background:linear-gradient(90deg,var(--green),var(--blue));"></div>
+                    <div class="skill-top">
+                        <div class="skill-trigger"><span class="emoji">📦</span> @ABC @SRS @QXO</div>
+                        <div class="skill-status status-live">Live</div>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-col">
+                            <div class="skill-label">Human Does</div>
+                            <div class="skill-val">Types supplier trigger e.g. <strong>@ABC [client]</strong></div>
+                        </div>
+                        <div class="skill-col">
+                            <div class="skill-label">AI Delivers</div>
+                            <div class="skill-val">Material order email. 7:30am same-day delivery. Pulls calendar + project data.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONVERSATIONS (Context) -->
+        <div class="section">
+            <div class="section-head">
+                <h2>Conversations (Context Channels)</h2>
+                <span class="count">Clarity + context = focused chat</span>
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <div style="font-size:11px; color:#666; margin-bottom:8px; text-transform:uppercase; letter-spacing:1.5px; font-weight:600;">
+                    Project-Level (Fixed — we set these)
+                </div>
+                <div class="convos-grid">
+                    <div class="convo-card">
+                        <div class="convo-icon">🧠</div>
+                        <div class="convo-name">Clarity</div>
+                        <div class="convo-desc">Main project chat. Full context. Talk about anything for this project.</div>
+                        <div class="convo-scope">Project</div>
+                    </div>
+                    <div class="convo-card">
+                        <div class="convo-icon">🔨</div>
+                        <div class="convo-name">Install</div>
+                        <div class="convo-desc">Colors, crew, access notes, production readiness. Michelle's world.</div>
+                        <div class="convo-scope">Project</div>
+                    </div>
+                    <div class="convo-card">
+                        <div class="convo-icon">⬆️</div>
+                        <div class="convo-name">Upgrade</div>
+                        <div class="convo-desc">Upsell opportunities. Ridge cap, class 4, gutter guards. Extra margin.</div>
+                        <div class="convo-scope">Project</div>
+                    </div>
+                    <div class="convo-card">
+                        <div class="convo-icon">📋</div>
+                        <div class="convo-name">Supplement</div>
+                        <div class="convo-desc">INS strategy, F9 notes, carrier communication. The office workflow.</div>
+                        <div class="convo-scope">Project</div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div style="font-size:11px; color:#666; margin-bottom:8px; text-transform:uppercase; letter-spacing:1.5px; font-weight:600;">
+                    Global-Level (Rep creates — + button)
+                </div>
+                <div class="convos-grid">
+                    <div class="convo-card" style="border-style:dashed;">
+                        <div class="convo-icon">🎯</div>
+                        <div class="convo-name">Goals</div>
+                        <div class="convo-desc">"My goal is 5 contracts this month." Clarity holds you accountable.</div>
+                        <div class="convo-scope">Global — Custom</div>
+                    </div>
+                    <div class="convo-card" style="border-style:dashed;">
+                        <div class="convo-icon">🎤</div>
+                        <div class="convo-name">Pitch</div>
+                        <div class="convo-desc">Practice your pitch. Clarity coaches, critiques, helps you improve.</div>
+                        <div class="convo-scope">Global — Custom</div>
+                    </div>
+                    <div class="convo-card" style="border-style:dashed;">
+                        <div class="convo-icon">📝</div>
+                        <div class="convo-name">Feedback</div>
+                        <div class="convo-desc">Platform bugs, feature requests. Already knows the context.</div>
+                        <div class="convo-scope">Global — Custom</div>
+                    </div>
+                    <div class="convo-card" style="border-style:dashed;">
+                        <div class="convo-icon">➕</div>
+                        <div class="convo-name">Create New</div>
+                        <div class="convo-desc">Rep creates any chat. Sets the context. Clarity adapts.</div>
+                        <div class="convo-scope">Global — Custom</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPRINT: WHAT'S NEXT -->
+        <div class="section">
+            <div class="section-head">
+                <h2>Sprint — What's Next</h2>
+            </div>
+            <div class="sprint-grid">
+                <div class="sprint-card">
+                    <h3><span style="color:var(--amber);">🔧</span> Building Now</h3>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--amber);"></div>
+                        <div><strong style="color:#ddd;">Morning Push</strong> — 8am daily DM to each rep. Calendar workaround built (post_notes parsing). Wiring in.</div>
+                    </div>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--amber);"></div>
+                        <div><strong style="color:#ddd;">Profit Share Calc</strong> — Rep sees their money after every INS response. Engagement flywheel.</div>
+                    </div>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--amber);"></div>
+                        <div><strong style="color:#ddd;">Auto Audit</strong> — Status change fires doc check automatically. No @start needed.</div>
+                    </div>
+                </div>
+
+                <div class="sprint-card">
+                    <h3><span style="color:var(--red);">🚫</span> Blocked — Need Juli/Yash</h3>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--red);"></div>
+                        <div><strong style="color:#ddd;">Memory/Preferences wiring</strong> — API exists (/memories, user_preferences). Needs platform connection so Clarity remembers goals.</div>
+                    </div>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--red);"></div>
+                        <div><strong style="color:#ddd;">Calendar sync</strong> — @adj_scheduled skips database. Only writes Google Calendar. Morning push needs both sources.</div>
+                    </div>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--red);"></div>
+                        <div><strong style="color:#ddd;">Hollow skill slots</strong> — Platform needs empty skill containers we can drop knowledge bases into and hook to Clarity.</div>
+                    </div>
+                </div>
+
+                <div class="sprint-card">
+                    <h3><span style="color:var(--purple);">🔮</span> Next Wave — Alvaro</h3>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--purple);"></div>
+                        <div><strong style="color:#ddd;">BUILD skills 1-5</strong> — Mark up bids, mirror estimate, identify gaps, build retail, write F9. The full AI supplement engine.</div>
+                    </div>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--purple);"></div>
+                        <div><strong style="color:#ddd;">Hammer icon / Production Ready</strong> — Visual signal when all trades 💰/👏. Universal green light.</div>
+                    </div>
+                    <div class="sprint-item">
+                        <div class="dot" style="background:var(--purple);"></div>
+                        <div><strong style="color:#ddd;">CAP-OUT cascade</strong> — Final check → auto sub payments → profit share → referral trigger.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-num" style="color:var(--green);">14</div>
+                <div class="stat-label">Skills Live</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" style="color:var(--amber);">3</div>
+                <div class="stat-label">Building</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" style="color:var(--red);">3</div>
+                <div class="stat-label">Blocked</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" style="color:var(--cyan);">1</div>
+                <div class="stat-label">Agent</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num" style="color:var(--purple);">∞</div>
+                <div class="stat-label">Conversations</div>
+            </div>
+        </div>
+
+        <div style="text-align:center; padding:20px 0 40px; font-size:11px; color:#333;">
+            OpenClaw — Clarity 3+ &bull; IFC Contracting Solutions &bull; Confidential &bull; Feb 2026
+        </div>
     </div>
-
-    <!-- Top Navigation / Project Header -->
-    <header class="border-b border-white/5 bg-app-base/80 sticky top-0 z-50 backdrop-blur-xl">
-        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                
-                <!-- Project Identity -->
-                <div class="flex items-center gap-5">
-                    <!-- Clarity Bot Avatar -->
-                    <div class="h-14 w-14 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center shadow-lg shadow-cyan-900/20 overflow-hidden border border-white/10 group relative cursor-pointer ring-2 ring-transparent hover:ring-cyan-500/50 transition-all duration-300">
-                         <img src="http://googleusercontent.com/image_generation_content/8" alt="Clarity Bot Avatar" class="h-full w-full object-cover transform group-hover:scale-110 transition-transform duration-500">
-                         <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-semibold text-white tracking-tight flex items-center gap-3">
-                            OpenClaw <span class="text-gray-600 font-light">/</span> Clarity
-                            <span class="flex items-center gap-1.5 text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-mono uppercase tracking-widest font-medium">
-                                <span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span></span>
-                                Active
-                            </span>
-                        </h1>
-                        <p class="text-[11px] text-gray-400 font-mono mt-1.5 flex items-center gap-2">
-                            <span class="text-cyan-400 font-medium px-1.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">v1.15</span> 
-                            <span>Feb 19, 2026</span> 
-                            <span class="text-gray-600">•</span> 
-                            <span>Owners: Will & Angie</span>
-                            <span class="text-gray-600">•</span> 
-                            <span>Builder: Olikiver</span>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Global Project Context (The Constitution) -->
-                <div class="flex-1 w-full md:w-auto md:max-w-xl">
-                    <div class="glass-inner rounded-xl p-3 flex flex-wrap gap-x-6 gap-y-3 text-[11px] font-mono">
-                        <div class="flex items-center gap-2" title="AI Model">
-                            <i class="fa-solid fa-microchip text-purple-400"></i>
-                            <span class="text-gray-500">Model:</span>
-                            <span class="text-gray-200">Opus 4.6</span>
-                        </div>
-                        <div class="flex items-center gap-2" title="Primary Interface">
-                            <i class="fa-solid fa-mobile-screen text-blue-400"></i>
-                            <span class="text-gray-500">Platform:</span>
-                            <span class="text-gray-200">IFC App</span>
-                        </div>
-                        <div class="flex items-center gap-2" title="Host Machine">
-                            <i class="fa-solid fa-server text-emerald-400"></i>
-                            <span class="text-gray-500">Host:</span>
-                            <span class="text-gray-200">Mac Mini</span>
-                        </div>
-                        <div class="flex items-center gap-2" title="Tech Stack">
-                            <i class="fa-solid fa-layer-group text-amber-400"></i>
-                            <span class="text-gray-500">Stack:</span>
-                            <span class="text-gray-200">Python/Redis/SQLite</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- BMad Controls -->
-                <div class="flex items-center gap-3">
-                    <button class="bg-transparent hover:bg-white/5 text-gray-400 hover:text-gray-200 px-3 py-2 rounded-lg text-sm transition-colors border border-transparent hover:border-white/10 font-medium flex items-center gap-2">
-                        <i class="fa-solid fa-terminal text-pink-500/80"></i> /bmad-help
-                    </button>
-                    <button class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-lg shadow-cyan-900/30 transition-all active:scale-95 flex items-center gap-2">
-                        <i class="fa-solid fa-play text-[10px]"></i> Start Workflow
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Dashboard Grid -->
-    <main class="flex-1 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full relative z-10">
-        
-        <!-- Workflow Phases -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-start">
-
-            <!-- Phase 1: Analysis (Complete) -->
-            <div class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                <div class="h-1 w-full bg-gradient-to-r from-indigo-500 to-indigo-400"></div>
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-5">
-                        <h2 class="text-sm font-semibold text-white flex items-center gap-3 uppercase tracking-wider">
-                            <span class="bg-indigo-500/20 text-indigo-300 w-7 h-7 rounded-lg flex items-center justify-center text-xs border border-indigo-500/20">1</span>
-                            Analysis
-                        </h2>
-                        <span class="text-gray-400 text-[10px] font-bold bg-white/5 px-2.5 py-1 rounded-full border border-white/5">DONE</span>
-                    </div>
-
-                    <!-- Vision Image -->
-                    <div class="mb-5 rounded-xl overflow-hidden border border-white/5 shadow-lg relative group-hover:border-indigo-500/30 transition-colors">
-                         <img src="http://googleusercontent.com/image_generation_content/3" alt="Clarity Vision" class="w-full h-36 object-cover object-top opacity-80 group-hover:opacity-100 transition-opacity duration-500 filter contrast-125">
-                         <div class="absolute bottom-0 w-full bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-8 pb-2 px-3">
-                            <p class="text-[10px] text-indigo-200 font-medium tracking-wide">"Talk to Clarity, it handles the rest."</p>
-                         </div>
-                    </div>
-
-                    <div class="space-y-3">
-                        <!-- Brief Item -->
-                        <div class="glass-inner p-4 rounded-xl relative overflow-hidden group/item hover:bg-white/5 transition-colors">
-                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500/50 rounded-l-xl"></div>
-                            <div class="flex justify-between items-start">
-                                <h3 class="text-xs font-semibold text-gray-200">Product Brief</h3>
-                                <i class="fa-solid fa-check text-indigo-400 text-[10px]"></i>
-                            </div>
-                            <div class="mt-2 text-[10px] font-mono text-indigo-300/80 bg-black/40 px-2 py-1 rounded-md inline-flex items-center gap-1.5 border border-white/5">
-                                <i class="fa-regular fa-file-code"></i> product-brief.md
-                            </div>
-                        </div>
-                        <!-- Research Item -->
-                        <div class="glass-inner p-4 rounded-xl relative overflow-hidden group/item hover:bg-white/5 transition-colors">
-                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500/30 rounded-l-xl"></div>
-                            <div class="flex justify-between items-start">
-                                <h3 class="text-xs font-semibold text-gray-200">Workflow Research</h3>
-                                <i class="fa-solid fa-check text-indigo-400/50 text-[10px]"></i>
-                            </div>
-                            <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">7+ office roles & complex routing logic identified.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Phase 2: Planning (Completed) -->
-            <div class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                <div class="h-1 w-full bg-gradient-to-r from-blue-500 to-blue-400"></div>
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-5">
-                        <h2 class="text-sm font-semibold text-white flex items-center gap-3 uppercase tracking-wider">
-                            <span class="bg-blue-500/20 text-blue-300 w-7 h-7 rounded-lg flex items-center justify-center text-xs border border-blue-500/20">2</span>
-                            Planning
-                        </h2>
-                        <span class="text-gray-400 text-[10px] font-bold bg-white/5 px-2.5 py-1 rounded-full border border-white/5">DONE</span>
-                    </div>
-
-                    <div class="space-y-3">
-                        <!-- PRD Item -->
-                        <div class="glass-inner p-4 rounded-xl relative overflow-hidden hover:bg-white/5 transition-colors">
-                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500/50 rounded-l-xl"></div>
-                            <div class="flex justify-between items-start">
-                                <h3 class="text-xs font-semibold text-gray-200">Routing Logic & SLAs</h3>
-                                <i class="fa-solid fa-check text-blue-400 text-[10px]"></i>
-                            </div>
-                            <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">Defined dynamic rules for Michelle, Julio, Vanessa.</p>
-                            <div class="mt-2 text-[10px] font-mono text-blue-300/80 bg-black/40 px-2 py-1 rounded-md inline-flex items-center gap-1.5 border border-white/5">
-                                <i class="fa-regular fa-file-lines"></i> PRD.md
-                            </div>
-                        </div>
-
-                        <!-- UX Item -->
-                        <div class="glass-inner p-4 rounded-xl relative overflow-hidden hover:bg-white/5 transition-colors">
-                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500/50 rounded-l-xl"></div>
-                            <div class="flex justify-between items-start">
-                                <h3 class="text-xs font-semibold text-gray-200">UX Design</h3>
-                                <i class="fa-solid fa-check text-blue-400 text-[10px]"></i>
-                            </div>
-                            <p class="text-[11px] text-gray-500 mt-1.5 leading-relaxed">Voice-first (Meta Glasses) & conversational DMs.</p>
-                            <div class="mt-2 text-[10px] font-mono text-blue-300/80 bg-black/40 px-2 py-1 rounded-md inline-flex items-center gap-1.5 border border-white/5">
-                                <i class="fa-regular fa-image"></i> ux-spec.md
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Phase 3: Solutioning (Completed) -->
-            <div class="glass-card rounded-2xl overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                <div class="h-1 w-full bg-gradient-to-r from-purple-500 to-purple-400"></div>
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-5">
-                        <h2 class="text-sm font-semibold text-white flex items-center gap-3 uppercase tracking-wider">
-                            <span class="bg-purple-500/20 text-purple-300 w-7 h-7 rounded-lg flex items-center justify-center text-xs border border-purple-500/20">3</span>
-                            Solution
-                        </h2>
-                        <span class="text-gray-400 text-[10px] font-bold bg-white/5 px-2.5 py-1 rounded-full border border-white/5">DONE</span>
-                    </div>
-
-                    <div class="space-y-3">
-                        <!-- Architecture Item -->
-                        <div class="glass-inner p-4 rounded-xl relative overflow-hidden hover:bg-white/5 transition-colors">
-                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-purple-500/50 rounded-l-xl"></div>
-                            <div class="flex justify-between items-center mb-3">
-                                <h3 class="text-xs font-semibold text-gray-200">System Architecture</h3>
-                                <i class="fa-solid fa-check text-purple-400 text-[10px]"></i>
-                            </div>
-                            <ul class="space-y-2.5">
-                                <li class="text-[11px] text-gray-400 flex items-center gap-2.5">
-                                    <div class="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center"><i class="fa-brands fa-apple text-gray-300"></i></div>
-                                    Mac Mini Daemon
-                                </li>
-                                <li class="text-[11px] text-gray-400 flex items-center gap-2.5">
-                                    <div class="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center"><i class="fa-solid fa-brain text-purple-400"></i></div>
-                                    Opus 4.6 via API
-                                </li>
-                                <li class="text-[11px] text-gray-400 flex items-center gap-2.5">
-                                    <div class="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center"><i class="fa-solid fa-database text-blue-400"></i></div>
-                                    Redis & SQLite
-                                </li>
-                                <li class="text-[11px] text-gray-400 flex items-center gap-2.5">
-                                    <div class="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center"><i class="fa-solid fa-network-wired text-emerald-400"></i></div>
-                                    IFC Platform Data
-                                </li>
-                            </ul>
-                            <div class="mt-4 text-[10px] font-mono text-purple-300/80 bg-black/40 px-2 py-1 rounded-md inline-flex items-center gap-1.5 border border-white/5">
-                                <i class="fa-solid fa-sitemap"></i> architecture.md
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Phase 4: Build (Implementation - ACTIVE) -->
-            <div class="glass-card rounded-2xl overflow-hidden border-cyan-500/30 shadow-[0_0_30px_-5px_rgba(6,182,212,0.15)] ring-1 ring-cyan-500/20">
-                <div class="h-1 w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
-                <div class="p-6 flex flex-col h-[520px]"> <!-- Fixed height for inner scroll -->
-                    <div class="flex justify-between items-center mb-5 shrink-0">
-                        <h2 class="text-sm font-semibold text-white flex items-center gap-3 uppercase tracking-wider">
-                            <span class="bg-cyan-500/20 text-cyan-300 w-7 h-7 rounded-lg flex items-center justify-center text-xs border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.3)]">4</span>
-                            Build
-                        </h2>
-                        <span class="text-cyan-300 text-[10px] font-bold bg-cyan-900/40 px-2.5 py-1 rounded-full border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.2)]">ACTIVE</span>
-                    </div>
-
-                    <!-- Scrollable inner content -->
-                    <div class="flex-1 overflow-y-auto pr-2 space-y-4 mask-fade-bottom pb-6">
-                        
-                        <!-- Live Modules Section -->
-                        <div class="glass-inner p-4 rounded-xl border-emerald-500/20 relative">
-                            <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"></div>
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-xs font-semibold text-gray-200">Live Skills <span class="text-gray-500 font-normal ml-1">(7/7)</span></span>
-                                <span class="flex items-center gap-1.5 text-[9px] text-emerald-400 font-mono font-bold tracking-wider">
-                                    <span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span></span>
-                                    ONLINE
-                                </span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div class="bg-black/30 rounded-lg p-2 border border-white/5 flex flex-col gap-1">
-                                    <span class="text-[10px] text-emerald-300 font-mono flex items-center gap-1.5"><i class="fa-brands fa-python opacity-50"></i> projects</span>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 border border-white/5 flex flex-col gap-1">
-                                    <span class="text-[10px] text-emerald-300 font-mono flex items-center gap-1.5"><i class="fa-brands fa-python opacity-50"></i> tasks</span>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 border border-white/5 flex flex-col gap-1">
-                                    <span class="text-[10px] text-emerald-300 font-mono flex items-center gap-1.5"><i class="fa-brands fa-python opacity-50"></i> adjuster</span>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 border border-white/5 flex flex-col gap-1">
-                                    <span class="text-[10px] text-emerald-300 font-mono flex items-center gap-1.5"><i class="fa-brands fa-python opacity-50"></i> calendar</span>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 border border-white/5 flex flex-col gap-1">
-                                    <span class="text-[10px] text-emerald-300 font-mono flex items-center gap-1.5"><i class="fa-brands fa-python opacity-50"></i> users</span>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 border border-white/5 flex flex-col gap-1">
-                                    <span class="text-[10px] text-emerald-300 font-mono flex items-center gap-1.5"><i class="fa-brands fa-python opacity-50"></i> messaging</span>
-                                </div>
-                                <div class="bg-black/30 rounded-lg p-2 border border-white/5 col-span-2 flex justify-between items-center">
-                                    <span class="text-[10px] text-emerald-300 font-mono flex items-center gap-1.5"><i class="fa-brands fa-python opacity-50"></i> trades</span>
-                                    <span class="text-[9px] text-emerald-500/70 bg-emerald-500/10 px-1.5 py-0.5 rounded">GraphQL+Emojis</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Advanced Flows Section -->
-                        <div class="glass-inner p-4 rounded-xl border-cyan-500/20 relative">
-                            <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-xs font-semibold text-gray-200">Advanced Flows</span>
-                                <span class="text-[9px] text-cyan-400 font-mono font-bold tracking-wider bg-cyan-500/10 px-1.5 py-0.5 rounded border border-cyan-500/20">BUILDING</span>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex items-start gap-2.5">
-                                    <div class="mt-0.5"><i class="fa-solid fa-check-circle text-cyan-400 text-[11px]"></i></div>
-                                    <div>
-                                        <p class="text-[11px] text-gray-300 font-medium">@meetup summary</p>
-                                        <p class="text-[10px] text-gray-500 mt-0.5">100% Python / 0 Claude calls. Instant execution.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-2.5">
-                                    <div class="mt-0.5"><i class="fa-solid fa-check-circle text-cyan-400 text-[11px]"></i></div>
-                                    <div>
-                                        <p class="text-[11px] text-gray-300 font-medium">@start skill</p>
-                                        <p class="text-[10px] text-gray-500 mt-0.5">Supplement audit workflow complete.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-2.5">
-                                    <div class="mt-0.5"><i class="fa-solid fa-check-circle text-cyan-400 text-[11px]"></i></div>
-                                    <div>
-                                        <p class="text-[11px] text-gray-300 font-medium">@response skill</p>
-                                        <p class="text-[10px] text-gray-500 mt-0.5">Insurance response analysis complete.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-2.5">
-                                    <div class="mt-0.5"><i class="fa-solid fa-check-circle text-cyan-400 text-[11px]"></i></div>
-                                    <div>
-                                        <p class="text-[11px] text-gray-300 font-medium">@bill skill</p>
-                                        <p class="text-[10px] text-gray-500 mt-0.5">Task routing, status shift, SLA rules.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-2.5 opacity-50 pt-1">
-                                    <div class="mt-0.5"><i class="fa-regular fa-circle text-gray-500 text-[11px]"></i></div>
-                                    <div>
-                                        <p class="text-[11px] text-gray-300 font-medium">@review / @calling</p>
-                                        <p class="text-[10px] text-cyan-400 mt-0.5">Next session focus.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                         <!-- Memory System Section -->
-                         <div class="glass-inner p-4 rounded-xl border-indigo-500/20 relative">
-                            <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent"></div>
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-xs font-semibold text-gray-200">Memory & Autonomy</span>
-                                <span class="text-[9px] text-indigo-400 font-mono font-bold tracking-wider bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">DONE</span>
-                            </div>
-                            <ul class="space-y-2 text-[11px] text-gray-400">
-                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-400"></i> Phase 1: Passive channel learning</li>
-                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-400"></i> Phase 2: Proactive contribution</li>
-                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-400"></i> System memory updated & deduped</li>
-                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-400"></i> 👎 Corrections injected</li>
-                            </ul>
-                            <div class="mt-3 text-[10px] text-indigo-300/70 bg-indigo-900/20 p-2 rounded-lg border border-indigo-500/10 italic text-center">
-                                Zero API calls. Facts never stored twice.
-                            </div>
-                        </div>
-
-                        <!-- Feedback Loop Section -->
-                        <div class="glass-inner p-4 rounded-xl border-amber-500/20 relative">
-                            <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-xs font-semibold text-gray-200">Feedback Loop</span>
-                                <span class="text-[9px] text-amber-400 font-mono font-bold tracking-wider bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">DONE</span>
-                            </div>
-                            <div class="flex flex-col gap-2 relative before:absolute before:inset-y-0 before:left-[9px] before:w-[1px] before:bg-amber-500/20">
-                                <div class="flex gap-3 relative z-10">
-                                    <div class="w-5 h-5 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0"><i class="fa-regular fa-thumbs-down text-[8px] text-amber-300"></i></div>
-                                    <p class="text-[11px] text-gray-400 mt-0.5">Trigger via reaction</p>
-                                </div>
-                                <div class="flex gap-3 relative z-10">
-                                    <div class="w-5 h-5 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center shrink-0"><i class="fa-solid fa-hashtag text-[8px] text-amber-300"></i></div>
-                                    <p class="text-[11px] text-gray-400 mt-0.5">Posts to #clarity-feedback</p>
-                                </div>
-                                <div class="flex gap-3 relative z-10">
-                                    <div class="w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0"><i class="fa-solid fa-brain text-[8px] text-emerald-400"></i></div>
-                                    <p class="text-[11px] text-gray-400 mt-0.5">Learns & stores correction</p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Quick Actions & Footer -->
-        <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Code Editor Preview (Project Context) -->
-            <div class="lg:col-span-2 glass-card rounded-2xl overflow-hidden border border-white/10 flex flex-col">
-                <!-- Mac OS Window Header -->
-                <div class="bg-[#1e1e1e] px-4 py-3 flex items-center justify-between border-b border-white/5">
-                    <div class="flex items-center gap-2">
-                        <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-                        <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
-                    </div>
-                    <div class="text-[11px] text-gray-400 font-mono font-medium flex items-center gap-2">
-                        <i class="fa-solid fa-file-lines text-gray-500"></i> project-context.md
-                    </div>
-                    <div class="w-10"></div> <!-- Spacer for centering -->
-                </div>
-                <!-- Code Area -->
-                <div class="bg-[#141414] p-5 font-mono text-[13px] leading-relaxed overflow-x-auto text-gray-300 flex-1">
-                    <div><span class="text-pink-400">const</span> <span class="text-blue-300">PROJECT_NAME</span> <span class="text-cyan-400">=</span> <span class="text-emerald-300">"OpenClaw Clarity"</span>;</div>
-                    <div><span class="text-pink-400">const</span> <span class="text-blue-300">WORKFLOW</span> <span class="text-cyan-400">=</span> <span class="text-emerald-300">"Rep^IFC"</span>; <span class="text-gray-500 italic">// Active context</span></div>
-                    <div><span class="text-pink-400">const</span> <span class="text-blue-300">AI_MODEL</span> <span class="text-cyan-400">=</span> <span class="text-emerald-300">"Opus 4.6"</span>;</div>
-                    <div><span class="text-pink-400">const</span> <span class="text-blue-300">PLATFORM</span> <span class="text-cyan-400">=</span> <span class="text-emerald-300">"IFC Custom App"</span>;</div>
-                    <br>
-                    <div><span class="text-pink-400">const</span> <span class="text-blue-300">CONSTRAINTS</span> <span class="text-cyan-400">=</span> [</div>
-                    <div class="pl-4"><span class="text-emerald-300">"Use Opus for brain/routing"</span>,</div>
-                    <div class="pl-4"><span class="text-emerald-300">"Use Sonnet for bulk analysis"</span>,</div>
-                    <div class="pl-4"><span class="text-emerald-300">"Data must stay in IFC infrastructure"</span></div>
-                    <div>];</div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="glass-card rounded-2xl p-6 border border-white/5 flex flex-col justify-center gap-4 relative overflow-hidden group">
-                <div class="absolute top-[-50%] right-[-50%] w-full h-full bg-gradient-to-bl from-cyan-500/10 to-transparent rounded-full blur-3xl group-hover:from-cyan-500/20 transition-all duration-500"></div>
-                
-                <h3 class="text-sm font-semibold text-white mb-2 uppercase tracking-wider">Quick Actions</h3>
-                
-                <button class="w-full text-left bg-black/40 hover:bg-white/10 text-gray-300 p-3.5 rounded-xl transition-all duration-200 flex items-center gap-4 border border-white/5 hover:border-cyan-500/30 group/btn relative overflow-hidden">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-900/50 to-blue-900/50 flex items-center justify-center text-cyan-400 border border-cyan-500/20 group-hover/btn:scale-110 transition-transform">
-                        <i class="fa-solid fa-bolt"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-sm text-gray-200">Quick Spec</div>
-                        <div class="text-[11px] text-gray-500 mt-0.5">Generate ad-hoc feature plans</div>
-                    </div>
-                </button>
-
-                <button class="w-full text-left bg-black/40 hover:bg-white/10 text-gray-300 p-3.5 rounded-xl transition-all duration-200 flex items-center gap-4 border border-white/5 hover:border-emerald-500/30 group/btn relative overflow-hidden">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-900/50 to-teal-900/50 flex items-center justify-center text-emerald-400 border border-emerald-500/20 group-hover/btn:scale-110 transition-transform">
-                        <i class="fa-solid fa-bug"></i>
-                    </div>
-                    <div>
-                        <div class="font-semibold text-sm text-gray-200">QA Automate</div>
-                        <div class="text-[11px] text-gray-500 mt-0.5">Generate test suite coverage</div>
-                    </div>
-                </button>
-            </div>
-        </div>
-
-    </main>
-
 </body>
 </html>
