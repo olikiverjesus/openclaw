@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rep^IFC — The Journey</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0F0F1A; }
+  </style>
+</head>
+<body>
+  <div style="padding:16px 20px 0; display:flex; gap:8px; font-family:-apple-system,sans-serif;">
+    <a href="index.html" style="padding:8px 18px; border-radius:10px; font-size:12px; font-weight:600; text-decoration:none; background:rgba(255,255,255,0.04); color:#888; border:1px solid rgba(255,255,255,0.06);">Dashboard</a>
+    <a href="journey.html" style="padding:8px 18px; border-radius:10px; font-size:12px; font-weight:600; text-decoration:none; background:rgba(168,85,247,0.12); color:#A855F7; border:1px solid rgba(168,85,247,0.25);">📖 Rep Journey</a>
+  </div>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+
+const phases = [
+  {
+    id: 1,
+    title: "Door Knock",
+    subtitle: "INSPECTION",
+    color: "#3B82F6",
+    steps: [
+      {
+        rep: "Knocks door, inspects roof, takes photos",
+        ai: null,
+        tool: "CompanyCam app",
+        icon: "🚪",
+        detail: "Rep creates CompanyCam project at the property address. Takes damage photos. Creates contact."
+      },
+      {
+        rep: "Posts @IFC note via voice-to-text",
+        ai: "Clarity saves to memory, fires first @momentum update, timeline starts",
+        tool: "CompanyCam → CRM",
+        icon: "🎤",
+        trigger: "@IFC",
+        detail: "Rep speaks the full homeowner expectation conversation. AI parses and routes."
+      },
+      {
+        rep: "Selects hail date in app",
+        ai: null,
+        tool: "CRM App",
+        icon: "📅",
+        detail: "Rep picks from starred hail dates. Stored on project record."
+      }
+    ]
+  },
+  {
+    id: 2,
+    title: "Contract",
+    subtitle: "SIGNED",
+    color: "#8B5CF6",
+    steps: [
+      {
+        rep: "Sends DocuSign from app — signs first",
+        ai: null,
+        tool: "CRM → DocuSign",
+        icon: "✍️",
+        detail: "Rep signs, client receives. Contract converts to Markdown for AI reading."
+      },
+      {
+        rep: null,
+        ai: "EagleView auto-ordered via API",
+        tool: "CRM → EagleView API",
+        icon: "🛰️",
+        trigger: "Auto — on contract sign",
+        detail: "System detects signed contract, triggers EagleView measurement order automatically."
+      },
+      {
+        rep: null,
+        ai: "48-hour cron: if no adjuster meeting, texts rep with follow-up script",
+        tool: "Twilio + CRM",
+        icon: "⏰",
+        trigger: "Auto — 48hr timer",
+        detail: "If rep hasn't scheduled adjuster meeting within 48hrs, gets a nudge with script."
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "Adjuster Meeting",
+    subtitle: "ADJ SCHEDULED → POST ADJ",
+    color: "#EC4899",
+    steps: [
+      {
+        rep: "Adds adjuster meeting date + adjuster contact in app",
+        ai: "Pre-meeting checklist triggered. Subs linked.",
+        tool: "CRM App",
+        icon: "📋",
+        trigger: "@adj_scheduled",
+        detail: "Rep enters date. AI fires prep checklist. Adjuster linked to project and searchable."
+      },
+      {
+        rep: "Arrives early. Marks collateral damage. Does NOT mark shingles. Executes meeting.",
+        ai: null,
+        tool: "CompanyCam + on-site",
+        icon: "🏠",
+        detail: "Hero/Guide/Victim framework. Maximum scope approved on first meeting."
+      },
+      {
+        rep: "Records AI Inspection Report via voice memo. Saves to CompanyCam FILES.",
+        ai: "Clarity reads report via API. Parses scope, quantities, install notes.",
+        tool: "AI Report Tool → CompanyCam Files",
+        icon: "📝",
+        detail: "One voice memo covers everything: approved trades, supplement gameplan, pipe jacks, vents, all line items."
+      },
+      {
+        rep: "Confirms: 'Yes, initiate trades'",
+        ai: "Sends trade initiation emails to each sub. Includes CompanyCam link + notes. Requests bids.",
+        tool: "Email/Twilio API",
+        icon: "📧",
+        trigger: "Clarity prompt → rep confirms",
+        detail: "Clarity says: 'Based on your report, Tier 1 subs are gutters, fence, deck. Initiate trades?' Rep confirms."
+      }
+    ]
+  },
+  {
+    id: 4,
+    title: "Audit & Build",
+    subtitle: "AUDIT → BUILD → PRECALL",
+    color: "#F59E0B",
+    steps: [
+      {
+        rep: null,
+        ai: "@start fires: checks 5 required docs (AI Report, EagleView, INS estimate, bids, contract). Pass → BUILD. Fail → kicks to REP HANDS with specific missing items.",
+        tool: "@start skill",
+        icon: "🔍",
+        trigger: "@start or auto on AUDIT status",
+        detail: "Gate check. Nothing moves forward without all 5 docs."
+      },
+      {
+        rep: "Watches AI build in real-time",
+        ai: "Marks up bids → Mirrors INS estimate → Identifies gaps → Builds retail estimate → Writes F9 justification",
+        tool: "BUILD skills 1-5",
+        icon: "⚡",
+        trigger: "Auto — after audit passes",
+        detail: "5-skill sequence. AI iterates until ALL gaps resolved. Uses EagleView for quantities, sub bids for pricing."
+      },
+      {
+        rep: null,
+        ai: "'Build complete. Your profit share is $X. Here's your upgrade tab.'",
+        tool: "Profit Share calc",
+        icon: "💰",
+        trigger: "Auto — build complete",
+        detail: "Rep sees their money. Stays engaged. Upgrade opportunities listed."
+      },
+      {
+        rep: null,
+        ai: "@precall: Supplement dept calls carrier. Logs response. Uploads picture report.",
+        tool: "@precall skill → JustCall",
+        icon: "📞",
+        trigger: "@precall",
+        detail: "Human reviews photos, writes descriptions. AI reads picture report, updates email draft."
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: "Supplement Sent",
+    subtitle: "SENT → INS. RESPONDED",
+    color: "#10B981",
+    steps: [
+      {
+        rep: null,
+        ai: "Supplement email sent to carrier with picture report. Status → SENT.",
+        tool: "Email API",
+        icon: "📤",
+        trigger: "Auto or manual send",
+        detail: "Full package: estimate + F9 + picture report + summary."
+      },
+      {
+        rep: null,
+        ai: "@response fires: reads new INS estimate, compares to previous, posts summary, updates profit share. Creates tasks for Cathy + Kim.",
+        tool: "@response skill",
+        icon: "📬",
+        trigger: "@response or auto on new estimate",
+        detail: "AI detects new INS version, calculates momentum, flags approvals/denials, rewrites F9s."
+      },
+      {
+        rep: null,
+        ai: "@calling: generates live phone script for adjuster calls from F9 context",
+        tool: "@calling skill",
+        icon: "🎯",
+        trigger: "@calling [project]",
+        detail: "SLIM mode: IFC supplement + latest INS only. Covers all disputed items."
+      },
+      {
+        rep: "Gets notified: 'New supplement approved. Your profit share is now $X.'",
+        ai: "Rinse and repeat: update estimate, rework F9, send new supplement. Each round updates profit share.",
+        tool: "Profit Share → push notification",
+        icon: "🔄",
+        detail: "Rep tracks job like a stock. Stays engaged through every round."
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: "Production Ready",
+    subtitle: "SUPP COMPLETED → INSTALL",
+    color: "#6366F1",
+    steps: [
+      {
+        rep: "Visits Install tab. Accepts bids. Selects colors. Adds notes.",
+        ai: "Clarity lists what's needed: colors, bids accepted, crew assigned, access notes.",
+        tool: "CRM Install Tab",
+        icon: "🎨",
+        detail: "Each trade marked production ready individually."
+      },
+      {
+        rep: null,
+        ai: "🔨 HAMMER appears on Flow Card. All trades 💰/👏. Universal signal: ready for production.",
+        tool: "Flow Card system",
+        icon: "🔨",
+        trigger: "Auto — all trades production ready",
+        detail: "Hammer visible to rep, Michelle, and production team. Green light."
+      },
+      {
+        rep: null,
+        ai: "@email sends client installation email. @G5/@H&R sends crew email. @ABC/@SRS sends material order.",
+        tool: "@email, @crew, @supplier skills",
+        icon: "📧",
+        trigger: "@email, @G5, @ABC etc.",
+        detail: "Three separate email systems. Fast execution, no file reading needed."
+      }
+    ]
+  },
+  {
+    id: 7,
+    title: "Cap-Out",
+    subtitle: "INSTALL → CAPPED",
+    color: "#EF4444",
+    steps: [
+      {
+        rep: "Collects final check. Uploads or marks collected.",
+        ai: "CAP-OUT SKILL fires: generates sub payment list, flags open punch items, calculates final profit share.",
+        tool: "CRM → QuickBooks",
+        icon: "💵",
+        trigger: "Auto — final check collected",
+        detail: "Instant cascade: pay subs, close financials, push final numbers to rep."
+      },
+      {
+        rep: "Sees: 'Job closed. Final profit share: $X.'",
+        ai: "3+ Algorithm: referral workflow triggered. Every completed job generates 3+ new opportunities.",
+        tool: "CRM → Syna",
+        icon: "🌟",
+        trigger: "Auto — on cap-out",
+        detail: "Referral requests sent. The flywheel spins."
+      }
+    ]
+  }
+];
+
+const supportSystems = [
+  { name: "Morning Push", trigger: "Auto — 8am daily", outcome: "DM each rep their daily briefing: calendar, SLA breaches, tasks due", status: "BUILD", icon: "☀️" },
+  { name: "SLA Watchdog", trigger: "@sla or auto 9am/2pm", outcome: "Scan all projects + tasks for SLA breaches, post warnings", status: "LIVE", icon: "🚨" },
+  { name: "Proactive Monitor", trigger: "Auto — channel listening", outcome: "Flags SLA breaches when projects mentioned in conversation", status: "LIVE", icon: "👂" },
+  { name: "@meetup", trigger: "@meetup [rep]", outcome: "Weekly review: every project one-by-one, action items, auto-create tasks", status: "LIVE", icon: "📊" },
+  { name: "Memory", trigger: "Rep tells Clarity goals/preferences", outcome: "Stores to /memories. Clarity holds rep accountable over time.", status: "NEEDS WIRING", icon: "🧠" },
+  { name: "@bill", trigger: "@bill [project]", outcome: "Check flow card, create Vanessa billing task if clear", status: "LIVE", icon: "💳" },
+  { name: "@review", trigger: "@review [project]", outcome: "Final QA gate before sending to carrier — Vanessa (P1) or Cathy (P2)", status: "LIVE", icon: "✅" },
+];
+
+function RepJourney() {
+  const [activePhase, setActivePhase] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
+  const [showSupport, setShowSupport] = useState(false);
+  const [viewMode, setViewMode] = useState("story");
+
+  const phase = phases[activePhase];
+  const step = phase.steps[activeStep];
+
+  const totalSteps = phases.reduce((sum, p) => sum + p.steps.length, 0);
+  const currentStepGlobal = phases.slice(0, activePhase).reduce((sum, p) => sum + p.steps.length, 0) + activeStep + 1;
+
+  const goNext = () => {
+    if (activeStep < phase.steps.length - 1) {
+      setActiveStep(activeStep + 1);
+    } else if (activePhase < phases.length - 1) {
+      setActivePhase(activePhase + 1);
+      setActiveStep(0);
+    }
+  };
+
+  const goPrev = () => {
+    if (activeStep > 0) {
+      setActiveStep(activeStep - 1);
+    } else if (activePhase > 0) {
+      const prevPhase = phases[activePhase - 1];
+      setActivePhase(activePhase - 1);
+      setActiveStep(prevPhase.steps.length - 1);
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0F0F1A 0%, #1A1A2E 50%, #16213E 100%)',
+      color: '#E0E0E0',
+      fontFamily: "'Inter', -apple-system, sans-serif",
+      padding: '20px',
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+      `}</style>
+
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <h1 style={{
+          fontSize: 28, fontWeight: 800, margin: 0,
+          background: 'linear-gradient(135deg, #00D4FF, #7B61FF, #FF6B6B)',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+        }}>
+          Rep^IFC — The Journey
+        </h1>
+        <p style={{ color: '#888', fontSize: 13, margin: '4px 0 0' }}>
+          Rep talks. AI works. Humans review.
+        </p>
+      </div>
+
+      {/* Mode Toggle */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 20 }}>
+        {["story", "map"].map(mode => (
+          <button key={mode} onClick={() => { setViewMode(mode); setShowSupport(false); }}
+            style={{
+              padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
+              fontSize: 13, fontWeight: 600, transition: 'all 0.2s',
+              background: viewMode === mode ? 'linear-gradient(135deg, #00D4FF, #7B61FF)' : 'rgba(255,255,255,0.08)',
+              color: viewMode === mode ? '#fff' : '#999',
+            }}>
+            {mode === 'story' ? '📖 Story Mode' : '🗺️ Full Map'}
+          </button>
+        ))}
+        <button onClick={() => setShowSupport(!showSupport)}
+          style={{
+            padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
+            fontSize: 13, fontWeight: 600, transition: 'all 0.2s',
+            background: showSupport ? 'linear-gradient(135deg, #F59E0B, #EF4444)' : 'rgba(255,255,255,0.08)',
+            color: showSupport ? '#fff' : '#999',
+          }}>
+          ⚙️ Support Systems
+        </button>
+      </div>
+
+      {/* Support Systems Panel */}
+      {showSupport && (
+        <div style={{
+          animation: 'fadeIn 0.3s ease-out',
+          background: 'rgba(255,255,255,0.04)', borderRadius: 16,
+          padding: 20, marginBottom: 24, border: '1px solid rgba(255,255,255,0.08)',
+        }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, margin: '0 0 16px', color: '#F59E0B' }}>
+            Always-On Systems (run in background)
+          </h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+            {supportSystems.map((s, i) => (
+              <div key={i} style={{
+                background: 'rgba(255,255,255,0.04)', borderRadius: 12, padding: 14,
+                border: `1px solid ${s.status === 'LIVE' ? 'rgba(16,185,129,0.3)' : s.status === 'BUILD' ? 'rgba(245,158,11,0.3)' : 'rgba(239,68,68,0.3)'}`,
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: 20 }}>{s.icon}</span>
+                  <span style={{ fontWeight: 700, fontSize: 14 }}>{s.name}</span>
+                  <span style={{
+                    marginLeft: 'auto', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 10,
+                    background: s.status === 'LIVE' ? 'rgba(16,185,129,0.2)' : s.status === 'BUILD' ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.2)',
+                    color: s.status === 'LIVE' ? '#10B981' : s.status === 'BUILD' ? '#F59E0B' : '#EF4444',
+                  }}>{s.status}</span>
+                </div>
+                <div style={{ fontSize: 11, color: '#888', fontFamily: 'JetBrains Mono', marginBottom: 4 }}>
+                  {s.trigger}
+                </div>
+                <div style={{ fontSize: 12, color: '#CCC' }}>{s.outcome}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* STORY MODE */}
+      {viewMode === 'story' && !showSupport && (
+        <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
+          {/* Phase Timeline */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
+            {phases.map((p, i) => (
+              <button key={p.id} onClick={() => { setActivePhase(i); setActiveStep(0); }}
+                style={{
+                  padding: '6px 14px', borderRadius: 16, border: 'none', cursor: 'pointer',
+                  fontSize: 12, fontWeight: 600, transition: 'all 0.2s',
+                  background: i === activePhase ? p.color : 'rgba(255,255,255,0.06)',
+                  color: i === activePhase ? '#fff' : '#777',
+                  transform: i === activePhase ? 'scale(1.05)' : 'scale(1)',
+                }}>
+                {p.title}
+              </button>
+            ))}
+          </div>
+
+          {/* Progress */}
+          <div style={{ textAlign: 'center', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, color: '#666', fontFamily: 'JetBrains Mono' }}>
+              Step {currentStepGlobal} of {totalSteps}
+            </span>
+            <div style={{
+              height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, margin: '6px auto 0',
+              maxWidth: 400, overflow: 'hidden',
+            }}>
+              <div style={{
+                height: '100%', borderRadius: 2, transition: 'width 0.4s ease',
+                width: `${(currentStepGlobal / totalSteps) * 100}%`,
+                background: `linear-gradient(90deg, ${phase.color}, ${phase.color}88)`,
+              }} />
+            </div>
+          </div>
+
+          {/* Main Card */}
+          <div key={`${activePhase}-${activeStep}`} style={{
+            animation: 'fadeIn 0.4s ease-out',
+            maxWidth: 600, margin: '0 auto',
+            background: 'rgba(255,255,255,0.04)',
+            borderRadius: 20, border: `2px solid ${phase.color}44`,
+            overflow: 'hidden',
+          }}>
+            {/* Phase Header */}
+            <div style={{
+              background: `linear-gradient(135deg, ${phase.color}22, ${phase.color}08)`,
+              padding: '16px 24px', borderBottom: `1px solid ${phase.color}33`,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 40 }}>{step.icon}</span>
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: phase.color, letterSpacing: 2, textTransform: 'uppercase' }}>
+                    {phase.subtitle}
+                  </div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: '#fff' }}>
+                    {phase.title}
+                  </div>
+                </div>
+                <div style={{
+                  marginLeft: 'auto', fontSize: 12, color: '#666',
+                  fontFamily: 'JetBrains Mono',
+                }}>
+                  {activeStep + 1}/{phase.steps.length}
+                </div>
+              </div>
+            </div>
+
+            {/* Step Content */}
+            <div style={{ padding: 24 }}>
+              {/* Trigger Badge */}
+              {step.trigger && (
+                <div style={{
+                  display: 'inline-block', marginBottom: 16,
+                  padding: '4px 12px', borderRadius: 12,
+                  background: 'rgba(123,97,255,0.15)', border: '1px solid rgba(123,97,255,0.3)',
+                  fontSize: 11, fontFamily: 'JetBrains Mono', color: '#7B61FF',
+                }}>
+                  ⚡ {step.trigger}
+                </div>
+              )}
+
+              {/* Rep Action */}
+              {step.rep && (
+                <div style={{
+                  animation: 'slideIn 0.3s ease-out',
+                  background: 'rgba(59,130,246,0.08)', borderRadius: 14,
+                  padding: 16, marginBottom: 12,
+                  borderLeft: '4px solid #3B82F6',
+                }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#3B82F6', letterSpacing: 1.5, marginBottom: 6 }}>
+                    👤 REP DOES
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: '#E8E8E8', lineHeight: 1.5 }}>
+                    {step.rep}
+                  </div>
+                </div>
+              )}
+
+              {/* Arrow */}
+              {step.rep && step.ai && (
+                <div style={{ textAlign: 'center', margin: '8px 0', fontSize: 20, color: '#444' }}>↓</div>
+              )}
+
+              {/* AI Action */}
+              {step.ai && (
+                <div style={{
+                  animation: 'slideIn 0.4s ease-out 0.1s both',
+                  background: 'rgba(0,212,255,0.08)', borderRadius: 14,
+                  padding: 16, marginBottom: 12,
+                  borderLeft: '4px solid #00D4FF',
+                }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#00D4FF', letterSpacing: 1.5, marginBottom: 6 }}>
+                    🤖 AI DOES
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 500, color: '#E8E8E8', lineHeight: 1.5 }}>
+                    {step.ai}
+                  </div>
+                </div>
+              )}
+
+              {/* Only AI (no rep action) */}
+              {!step.rep && step.ai && (
+                <div style={{
+                  textAlign: 'center', margin: '4px 0 12px',
+                  fontSize: 11, color: '#666', fontStyle: 'italic',
+                }}>
+                  No human action needed — fully automated
+                </div>
+              )}
+
+              {/* Tool */}
+              <div style={{
+                fontSize: 11, color: '#777', fontFamily: 'JetBrains Mono',
+                marginTop: 8,
+              }}>
+                🔧 {step.tool}
+              </div>
+
+              {/* Detail */}
+              <div style={{
+                marginTop: 16, padding: 14, borderRadius: 12,
+                background: 'rgba(255,255,255,0.03)',
+                fontSize: 13, color: '#999', lineHeight: 1.6,
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+              }}>
+                {step.detail}
+              </div>
+            </div>
+
+            {/* Navigation */}
+            <div style={{
+              display: 'flex', justifyContent: 'space-between', padding: '12px 24px 20px',
+            }}>
+              <button onClick={goPrev}
+                disabled={activePhase === 0 && activeStep === 0}
+                style={{
+                  padding: '10px 24px', borderRadius: 12, border: 'none', cursor: 'pointer',
+                  fontSize: 13, fontWeight: 600,
+                  background: 'rgba(255,255,255,0.08)', color: '#999',
+                  opacity: (activePhase === 0 && activeStep === 0) ? 0.3 : 1,
+                }}>
+                ← Back
+              </button>
+              <button onClick={goNext}
+                disabled={activePhase === phases.length - 1 && activeStep === phase.steps.length - 1}
+                style={{
+                  padding: '10px 24px', borderRadius: 12, border: 'none', cursor: 'pointer',
+                  fontSize: 13, fontWeight: 700,
+                  background: `linear-gradient(135deg, ${phase.color}, ${phase.color}CC)`,
+                  color: '#fff',
+                  opacity: (activePhase === phases.length - 1 && activeStep === phase.steps.length - 1) ? 0.3 : 1,
+                }}>
+                Next →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MAP MODE */}
+      {viewMode === 'map' && !showSupport && (
+        <div style={{ animation: 'fadeIn 0.3s ease-out', maxWidth: 800, margin: '0 auto' }}>
+          {phases.map((p, pi) => (
+            <div key={p.id} style={{ marginBottom: 24 }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12,
+                padding: '10px 16px', borderRadius: 12,
+                background: `linear-gradient(135deg, ${p.color}22, ${p.color}08)`,
+                borderLeft: `4px solid ${p.color}`,
+              }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: p.color, letterSpacing: 2, textTransform: 'uppercase' }}>
+                  PHASE {p.id}
+                </span>
+                <span style={{ fontSize: 16, fontWeight: 800, color: '#fff' }}>{p.title}</span>
+                <span style={{ fontSize: 11, color: '#666', marginLeft: 'auto', fontFamily: 'JetBrains Mono' }}>
+                  {p.subtitle}
+                </span>
+              </div>
+              {p.steps.map((s, si) => (
+                <div key={si} style={{
+                  display: 'grid', gridTemplateColumns: '40px 1fr 1fr 120px',
+                  gap: 12, alignItems: 'start',
+                  padding: '10px 12px', marginBottom: 4, borderRadius: 10,
+                  background: 'rgba(255,255,255,0.02)',
+                  borderBottom: '1px solid rgba(255,255,255,0.04)',
+                  cursor: 'pointer',
+                  transition: 'background 0.2s',
+                }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+                  onClick={() => { setViewMode('story'); setActivePhase(pi); setActiveStep(si); }}
+                >
+                  <span style={{ fontSize: 22, textAlign: 'center' }}>{s.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#3B82F6', letterSpacing: 1 }}>REP</div>
+                    <div style={{ fontSize: 12, color: s.rep ? '#CCC' : '#555', fontStyle: s.rep ? 'normal' : 'italic' }}>
+                      {s.rep || 'Automated — no action'}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#00D4FF', letterSpacing: 1 }}>AI</div>
+                    <div style={{ fontSize: 12, color: s.ai ? '#CCC' : '#555', fontStyle: s.ai ? 'normal' : 'italic' }}>
+                      {s.ai || '—'}
+                    </div>
+                  </div>
+                  <div>
+                    {s.trigger && (
+                      <div style={{
+                        fontSize: 10, fontFamily: 'JetBrains Mono', color: '#7B61FF',
+                        background: 'rgba(123,97,255,0.1)', padding: '2px 6px', borderRadius: 6,
+                        display: 'inline-block',
+                      }}>
+                        {s.trigger}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(React.createElement(RepJourney));
+  </script>
+</body>
+</html>
